@@ -1,0 +1,6 @@
+{
+  "name": "Icy Cup - ايسي كوب",
+  "description": "منيو إلكتروني ذكي وفاخر لـ ايسي كوب | Icy Cup - انتعاشك اليومي مع لوحة تحكم متكاملة لإدارة الأقسام والمنتجات.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

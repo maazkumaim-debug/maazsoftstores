@@ -1,0 +1,41 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Cairo", "Outfit", system-ui, -apple-system, sans-serif;
+  --font-display: "Outfit", "Cairo", system-ui, sans-serif;
+}
+
+/* Custom premium scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(139, 90, 43, 0.03);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(139, 90, 43, 0.2);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 90, 43, 0.4);
+}
+
+/* Custom soft glow classes for premium restaurant branding */
+.amber-glow {
+  box-shadow: 0 4px 30px rgba(139, 90, 43, 0.15);
+}
+
+.emerald-glow {
+  box-shadow: 0 4px 30px rgba(16, 185, 129, 0.15);
+}
+
+/* Smooth zoom transition for lightbox */
+.lightbox-zoom {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
