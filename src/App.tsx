@@ -8,7 +8,8 @@ import {
   ShoppingBag,
   Clock,
   Menu as MenuIcon,
-  AlertCircle
+  AlertCircle,
+  WifiOff
 } from "lucide-react";
 import { Category, Product, CartItem, Order } from "./types";
 import {
@@ -45,7 +46,10 @@ export default function App() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isDashboardOpen, setIsDashboardOpen] = useState(() => {
     if (typeof window !== "undefined") {
-      return window.location.pathname === "/admin" || window.location.hash === "#/admin";
+      const path = window.location.pathname;
+      const hash = window.location.hash;
+      const search = window.location.search;
+      return path === "/admin" || path.endsWith("/admin") || hash === "#/admin" || hash === "#admin" || search.includes("admin");
     }
     return false;
   });
@@ -54,10 +58,19 @@ export default function App() {
   // URL state synchronization
   useEffect(() => {
     const handlePopState = () => {
-      setIsDashboardOpen(window.location.pathname === "/admin" || window.location.hash === "#/admin");
+      const path = window.location.pathname;
+      const hash = window.location.hash;
+      const search = window.location.search;
+      setIsDashboardOpen(
+        path === "/admin" || path.endsWith("/admin") || hash === "#/admin" || hash === "#admin" || search.includes("admin")
+      );
     };
     window.addEventListener("popstate", handlePopState);
-    return () => window.removeEventListener("popstate", handlePopState);
+    window.addEventListener("hashchange", handlePopState);
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+      window.removeEventListener("hashchange", handlePopState);
+    };
   }, []);
 
   const handleOpenDashboard = () => {
@@ -274,78 +287,89 @@ export default function App() {
 
       {/* 2. Main content view area */}
       <main className="flex-1 max-w-6xl mx-auto w-full px-4 pt-6">
-        
-        {/* Connection Mode Helper Notification in customer view */}
-        {isFallback && (
-          <div className="mb-4 p-3 bg-amber-500/10 border border-amber-500/20 text-[#4a2c11] text-xs rounded-2xl flex items-center gap-2" dir="rtl">
-            <AlertCircle className="shrink-0 text-[#8b5a2b]" size={16} />
-            <span className="font-semibold text-[11px] sm:text-xs">
-              ملاحظة: المنيو يعرض البيانات الافتراضية حالياً. لربط وتفعيل قاعدة بيانات Supabase الحية، تفضل بزيارة لوحة التحكم عبر إضافة <code className="bg-white/60 px-1 py-0.5 rounded text-[#4a2c11] font-mono">/admin</code> لرابط موقعك لنسخ كود الـ SQL وإعداد الجداول.
-            </span>
-          </div>
-        )}
 
         {activeHeaderTab === "menu" ? (
-          <div className="space-y-6" dir="rtl">
-            
-            {/* Category horizontal scrolling selector tabs */}
-            <div className="flex items-center gap-2.5 overflow-x-auto pb-2 scrollbar-none">
-              <button
-                onClick={() => setSelectedCategory("all")}
-                className={`px-5 py-3 rounded-full text-xs font-black transition-all cursor-pointer whitespace-nowrap shrink-0 ${
-                  selectedCategory === "all"
-                    ? "bg-gradient-to-r from-[#4a2c11] to-[#8b5a2b] text-white shadow-md shadow-[#4a2c11]/25"
-                    : "bg-white text-[#4a2c11] hover:bg-[#faf4eb] border border-[#f5ebd6]"
-                }`}
-                id="cat-tab-all"
-              >
-                <span>الكل ✨</span>
-              </button>
-
-              {visibleCategories
-                .sort((a, b) => a.display_order - b.display_order)
-                .map((cat) => (
-                  <button
-                    key={cat.id}
-                    onClick={() => setSelectedCategory(cat.id)}
-                    className={`px-5 py-3 rounded-full text-xs font-black transition-all cursor-pointer whitespace-nowrap shrink-0 ${
-                      selectedCategory === cat.id
-                        ? "bg-gradient-to-r from-[#4a2c11] to-[#8b5a2b] text-white shadow-md shadow-[#4a2c11]/25"
-                        : "bg-white text-[#4a2c11] hover:bg-[#faf4eb] border border-[#f5ebd6]"
-                    }`}
-                    id={`cat-tab-${cat.id}`}
-                  >
-                    <span>{cat.name}</span>
-                  </button>
-                ))}
-            </div>
-
-            {/* Products grid display */}
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {visibleProducts.map((prod) => {
-                const cartItem = cartItems.find((item) => item.product.id === prod.id);
-                const qty = cartItem ? cartItem.quantity : 0;
-
-                return (
-                  <ProductCard
-                    key={prod.id}
-                    product={prod}
-                    quantityInCart={qty}
-                    onUpdateQuantity={handleUpdateQuantity}
-                    onImageClick={(p) => setLightboxProduct(p)}
-                  />
-                );
-              })}
-            </div>
-
-            {/* Empty Menu State */}
-            {visibleProducts.length === 0 && (
-              <div className="text-center py-16">
-                <p className="text-zinc-500 font-bold text-sm">عذراً! لا توجد وجبات طعام تطابق بحثك حالياً.</p>
-                <p className="text-zinc-400 text-xs mt-1">جرب البحث بكلمة أخرى أو تصفح الأقسام من الأعلى.</p>
+          isFallback ? (
+            <div className="flex flex-col items-center justify-center p-6 text-center max-w-lg mx-auto my-12 bg-white rounded-[32px] border border-[#f5ebd6] shadow-xl shadow-[#4a2c11]/5 p-8" dir="rtl">
+              <div className="w-20 h-20 bg-red-500/10 text-red-600 rounded-full flex items-center justify-center mb-6 animate-pulse">
+                <WifiOff size={36} />
               </div>
-            )}
-          </div>
+              <h3 className="font-extrabold text-[#4a2c11] text-lg sm:text-xl mb-3">لا يوجد اتصال بالإنترنت</h3>
+              <p className="text-zinc-600 text-sm leading-relaxed mb-6">
+                لايوجد اتصال بالإنترنت تأكد من اتصالك بالإنترنت وحاول مره اخرى
+              </p>
+              
+              <div className="flex flex-col gap-3 w-full">
+                <button
+                  onClick={loadLatestData}
+                  className="w-full py-3.5 bg-gradient-to-r from-[#4a2c11] to-[#8b5a2b] hover:opacity-95 text-white font-extrabold text-xs sm:text-sm rounded-2xl shadow-md transition-all active:scale-95 cursor-pointer flex items-center justify-center gap-2"
+                >
+                  <span>إعادة المحاولة 🔄</span>
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-6" dir="rtl">
+              
+              {/* Category horizontal scrolling selector tabs */}
+              <div className="flex items-center gap-2.5 overflow-x-auto pb-2 scrollbar-none">
+                <button
+                  onClick={() => setSelectedCategory("all")}
+                  className={`px-5 py-3 rounded-full text-xs font-black transition-all cursor-pointer whitespace-nowrap shrink-0 ${
+                    selectedCategory === "all"
+                      ? "bg-gradient-to-r from-[#4a2c11] to-[#8b5a2b] text-white shadow-md shadow-[#4a2c11]/25"
+                      : "bg-white text-[#4a2c11] hover:bg-[#faf4eb] border border-[#f5ebd6]"
+                  }`}
+                  id="cat-tab-all"
+                >
+                  <span>الكل ✨</span>
+                </button>
+
+                {visibleCategories
+                  .sort((a, b) => a.display_order - b.display_order)
+                  .map((cat) => (
+                    <button
+                      key={cat.id}
+                      onClick={() => setSelectedCategory(cat.id)}
+                      className={`px-5 py-3 rounded-full text-xs font-black transition-all cursor-pointer whitespace-nowrap shrink-0 ${
+                        selectedCategory === cat.id
+                          ? "bg-gradient-to-r from-[#4a2c11] to-[#8b5a2b] text-white shadow-md shadow-[#4a2c11]/25"
+                          : "bg-white text-[#4a2c11] hover:bg-[#faf4eb] border border-[#f5ebd6]"
+                      }`}
+                      id={`cat-tab-${cat.id}`}
+                    >
+                      <span>{cat.name}</span>
+                    </button>
+                  ))}
+              </div>
+
+              {/* Products grid display */}
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {visibleProducts.map((prod) => {
+                  const cartItem = cartItems.find((item) => item.product.id === prod.id);
+                  const qty = cartItem ? cartItem.quantity : 0;
+
+                  return (
+                    <ProductCard
+                      key={prod.id}
+                      product={prod}
+                      quantityInCart={qty}
+                      onUpdateQuantity={handleUpdateQuantity}
+                      onImageClick={(p) => setLightboxProduct(p)}
+                    />
+                  );
+                })}
+              </div>
+
+              {/* Empty Menu State */}
+              {visibleProducts.length === 0 && (
+                <div className="text-center py-16">
+                  <p className="text-zinc-500 font-bold text-sm">عذراً! لا توجد وجبات طعام تطابق بحثك حالياً.</p>
+                  <p className="text-zinc-400 text-xs mt-1">جرب البحث بكلمة أخرى أو تصفح الأقسام من الأعلى.</p>
+                </div>
+              )}
+            </div>
+          )
         ) : (
           /* Previous Orders Tracker panel */
           <PreviousOrders

@@ -26,6 +26,8 @@ export default function MenuHeader({
 }: MenuHeaderProps) {
   const storeName = typeof window !== "undefined" ? (localStorage.getItem("store_name") || "ايسي كوب | Icy Cup") : "ايسي كوب | Icy Cup";
   const storeDesc = typeof window !== "undefined" ? (localStorage.getItem("store_description") || "انتعاشك اليومي") : "انتعاشك اليومي";
+  const creditText = typeof window !== "undefined" ? (localStorage.getItem("credit_text") ?? "برمجة وتصميم / معاذ الكميم") : "برمجة وتصميم / معاذ الكميم";
+  const creditPhone = typeof window !== "undefined" ? (localStorage.getItem("credit_phone") ?? "779698389") : "779698389";
 
   return (
     <header className="relative bg-[#20100a] text-[#fdf8f4] overflow-hidden pb-6 shrink-0" dir="rtl">
@@ -50,33 +52,20 @@ export default function MenuHeader({
             </div>
 
             {/* Left: Designer & Programmer Credits (Exactly as in the image!) */}
-            <div className="text-left font-sans select-text shrink-0">
-              <p className="text-emerald-500 text-[11px] sm:text-xs font-black leading-tight">
-                برمجة وتصميم / معاذ الكميم
-              </p>
-              <p className="text-emerald-500 text-[11px] sm:text-xs font-black tracking-widest mt-0.5">
-                779698389
-              </p>
-            </div>
-          </div>
-
-          {/* Action Buttons row */}
-          <div className="flex items-center justify-between w-full sm:w-auto gap-2 border-t border-[#321c13] pt-2 sm:pt-0 sm:border-0">
-            {/* Cart Button */}
-            <button
-              onClick={onOpenCart}
-              className="relative p-2 bg-gradient-to-r from-[#4a2c11] to-[#8b5a2b] hover:opacity-90 text-white rounded-xl shadow-md transition-all duration-200 cursor-pointer flex items-center gap-1.5 px-3"
-              aria-label="عرض الفاتورة"
-              id="cart-floating-btn"
-            >
-              <ShoppingBag size={15} className="stroke-[2.5]" />
-              <span className="text-[10px] font-bold">فاتورتك ({cartCount})</span>
-              {cartCount > 0 && (
-                <span className="absolute -top-1.5 -left-1.5 bg-red-500 text-white text-[9px] font-extrabold w-4 h-4 rounded-full flex items-center justify-center border-1 border-[#20100a] font-display animate-pulse">
-                  {cartCount}
-                </span>
-              )}
-            </button>
+            {(creditText || creditPhone) && (
+              <div className="text-left font-sans select-text shrink-0">
+                {creditText && (
+                  <p className="text-emerald-500 text-[11px] sm:text-xs font-black leading-tight">
+                    {creditText}
+                  </p>
+                )}
+                {creditPhone && (
+                  <p className="text-emerald-500 text-[11px] sm:text-xs font-black tracking-widest mt-0.5 animate-pulse">
+                    {creditPhone}
+                  </p>
+                )}
+              </div>
+            )}
           </div>
         </div>
 

@@ -87,6 +87,8 @@ export default function Dashboard({
   // Store Settings state
   const [storeNameState, setStoreNameState] = useState(() => localStorage.getItem("store_name") || "ايسي كوب | Icy Cup");
   const [storeDescState, setStoreDescState] = useState(() => localStorage.getItem("store_description") || "انتعاشك اليومي");
+  const [creditTextState, setCreditTextState] = useState(() => localStorage.getItem("credit_text") ?? "برمجة وتصميم / معاذ الكميم");
+  const [creditPhoneState, setCreditPhoneState] = useState(() => localStorage.getItem("credit_phone") ?? "779698389");
 
   // Notification Banner State
   const [copiedSQL, setCopiedSQL] = useState(false);
@@ -115,9 +117,11 @@ export default function Dashboard({
 
   const handleSaveSettings = (e: FormEvent) => {
     e.preventDefault();
-    localStorage.setItem("store_name", storeNameState.trim() || "ROYAL BAKERY");
-    localStorage.setItem("store_description", storeDescState.trim() || "منيو إلكتروني ذكي وفاخر");
-    setDbStatusMsg("تم تحديث معلومات المتجر بنجاح!");
+    localStorage.setItem("store_name", storeNameState.trim() || "ايسي كوب | Icy Cup");
+    localStorage.setItem("store_description", storeDescState.trim() || "انتعاشك اليومي");
+    localStorage.setItem("credit_text", creditTextState.trim());
+    localStorage.setItem("credit_phone", creditPhoneState.trim());
+    setDbStatusMsg("تم تحديث معلومات المتجر وحقوق التصميم بنجاح!");
   };
 
   const handleChangePin = (e: FormEvent) => {
@@ -693,7 +697,7 @@ export default function Dashboard({
             </div>
 
             <form onSubmit={handleSaveSettings} className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 shadow-xl space-y-5">
-              <h3 className="text-sm font-black text-white border-b border-zinc-800 pb-3">تعديل اسم ووصف المتجر</h3>
+              <h3 className="text-sm font-black text-white border-b border-zinc-800 pb-3">تعديل اسم المتجر وحقوق البرمجة والتصميم</h3>
               
               <div className="space-y-4">
                 <div>
@@ -718,6 +722,34 @@ export default function Dashboard({
                     className="w-full px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500"
                     required
                   />
+                </div>
+
+                <div className="border-t border-zinc-800 pt-4 mt-2">
+                  <h4 className="text-xs font-black text-amber-500 mb-3">حقوق البرمجة والتصميم (أعلى يمين الصفحة)</h4>
+                  
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-[11px] font-bold text-zinc-400 mb-1.5">نص الحقوق الرئيسي (مثال: برمجة وتصميم / معاذ الكميم)</label>
+                      <input
+                        type="text"
+                        placeholder="أدخل نص الحقوق"
+                        value={creditTextState}
+                        onChange={(e) => setCreditTextState(e.target.value)}
+                        className="w-full px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-bold text-zinc-400 mb-1.5">الرقم الفرعي / رقم الهاتف (مثال: 779698389)</label>
+                      <input
+                        type="text"
+                        placeholder="أدخل رقم الهاتف أو النص الإضافي"
+                        value={creditPhoneState}
+                        onChange={(e) => setCreditPhoneState(e.target.value)}
+                        className="w-full px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
 
